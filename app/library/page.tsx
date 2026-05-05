@@ -80,30 +80,45 @@ export default function LibraryPage() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {stories.map((story) => (
               <div
-                key={story.id}
-                onClick={() => setSelectedStory(story)}
-                className="bg-white rounded-2xl shadow-sm overflow-hidden cursor-pointer hover:shadow-md transition"
-              >
-                {/* 동화 표지 이미지 */}
-                {story.imageUrl && (
-                  <img
-                    src={story.imageUrl}
-                    alt="동화 표지"
-                    className="w-full h-48 object-cover"
-                  />
-                )}
-                <div className="p-4">
-                  <h3 className="font-bold text-gray-800 text-lg mb-1">
-                    {story.childName}의 동화
-                  </h3>
-                  <p className="text-purple-600 text-sm mb-2">
-                    테마: {story.theme}
-                  </p>
-                  <p className="text-gray-400 text-xs">
-                    {story.createdAt?.toDate?.()?.toLocaleDateString('ko-KR') || ''}
-                  </p>
+              key={story.id}
+              className="bg-white rounded-2xl shadow-sm overflow-hidden hover:shadow-md transition"
+            >
+              {story.imageUrl && (
+                <img
+                  src={story.imageUrl}
+                  alt="동화 표지"
+                  onClick={() => setSelectedStory(story)}
+                  className="w-full h-48 object-cover cursor-pointer"
+                />
+              )}
+              <div className="p-4">
+                <h3
+                  onClick={() => setSelectedStory(story)}
+                  className="font-bold text-gray-800 text-lg mb-1 cursor-pointer"
+                >
+                  {story.childName}의 동화
+                </h3>
+                <p className="text-purple-600 text-sm mb-2">
+                  테마: {story.theme}
+                </p>
+                <p className="text-gray-400 text-xs mb-3">
+                  {story.createdAt?.toDate?.()?.toLocaleDateString('ko-KR') || ''}
+                </p>
+                <div className="flex gap-2">
+                  <button
+                    onClick={() => setSelectedStory(story)}
+                    className="flex-1 border border-purple-600 text-purple-600 py-2 rounded-xl text-xs hover:bg-purple-50 transition"
+                  >
+                    📖 읽기
+                  </button>
+                  <Link href="/publish" className="flex-1">
+                    <button className="w-full bg-purple-600 text-white py-2 rounded-xl text-xs hover:bg-purple-700 transition">
+                      📚 출판하기
+                    </button>
+                  </Link>
                 </div>
               </div>
+            </div>
             ))}
           </div>
         )}
