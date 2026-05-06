@@ -31,12 +31,17 @@ export default function Home() {
                 {currentUser.email}
               </span>
               <Link href="/generate">
-                <button className="bg-purple-600 text-white px-4 py-2 rounded-lg hover:bg-purple-700 transition">
-                  동화 만들기
+                <button className="bg-purple-600 text-white px-4 py-2 rounded-lg hover:bg-purple-700 transition text-sm">
+                  AI 동화
+                </button>
+              </Link>
+              <Link href="/create">
+                <button className="bg-pink-500 text-white px-4 py-2 rounded-lg hover:bg-pink-600 transition text-sm">
+                  ✏️ 직접 쓰기
                 </button>
               </Link>
               <Link href="/library">
-                <button className="border border-purple-600 text-purple-600 px-4 py-2 rounded-lg hover:bg-purple-50 transition">
+                <button className="border border-purple-600 text-purple-600 px-4 py-2 rounded-lg hover:bg-purple-50 transition text-sm">
                   내 동화함
                 </button>
               </Link>
@@ -90,28 +95,43 @@ export default function Home() {
       </section>
 
       {/* 기능 소개 섹션 */}
-      <section className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-4xl mx-auto px-8 pb-20">
-        <div className="bg-white rounded-2xl p-6 shadow-sm text-center">
-          <div className="text-4xl mb-4">✍️</div>
-          <h3 className="text-lg font-bold text-gray-800 mb-2">AI 동화 생성</h3>
-          <p className="text-gray-500 text-sm">
-            GPT가 아이 맞춤형 동화를 즉시 작성해드립니다
-          </p>
-        </div>
-        <div className="bg-white rounded-2xl p-6 shadow-sm text-center">
-          <div className="text-4xl mb-4">🎨</div>
-          <h3 className="text-lg font-bold text-gray-800 mb-2">삽화 자동 생성</h3>
-          <p className="text-gray-500 text-sm">
-            AI가 동화에 어울리는 아름다운 삽화를 그려줍니다
-          </p>
-        </div>
-        <div className="bg-white rounded-2xl p-6 shadow-sm text-center">
-          <div className="text-4xl mb-4">📚</div>
-          <h3 className="text-lg font-bold text-gray-800 mb-2">동화 보관함</h3>
-          <p className="text-gray-500 text-sm">
-            만든 동화를 저장하고 언제든지 다시 읽을 수 있습니다
-          </p>
-        </div>
+      <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-5xl mx-auto px-8 pb-20">
+        <Link href="/generate">
+          <div className="bg-white rounded-2xl p-6 shadow-sm text-center cursor-pointer hover:shadow-md transition">
+            <div className="text-4xl mb-4">✍️</div>
+            <h3 className="text-lg font-bold text-gray-800 mb-2">AI 동화 생성</h3>
+            <p className="text-gray-500 text-sm">
+              AI가 아이 맞춤형 동화와 삽화를 즉시 만들어드립니다
+            </p>
+          </div>
+        </Link>
+        <Link href="/create">
+          <div className="bg-white rounded-2xl p-6 shadow-sm text-center cursor-pointer hover:shadow-md transition border-2 border-pink-100">
+            <div className="text-4xl mb-4">✏️</div>
+            <h3 className="text-lg font-bold text-gray-800 mb-2">직접 동화 쓰기</h3>
+            <p className="text-gray-500 text-sm">
+              동화를 직접 쓰고 삽화도 직접 업로드할 수 있습니다
+            </p>
+          </div>
+        </Link>
+        <Link href="/library">
+          <div className="bg-white rounded-2xl p-6 shadow-sm text-center cursor-pointer hover:shadow-md transition">
+            <div className="text-4xl mb-4">📚</div>
+            <h3 className="text-lg font-bold text-gray-800 mb-2">동화 보관함</h3>
+            <p className="text-gray-500 text-sm">
+              만든 동화를 저장하고 언제든지 다시 읽을 수 있습니다
+            </p>
+          </div>
+        </Link>
+        <Link href="/publish">
+          <div className="bg-white rounded-2xl p-6 shadow-sm text-center cursor-pointer hover:shadow-md transition">
+            <div className="text-4xl mb-4">📖</div>
+            <h3 className="text-lg font-bold text-gray-800 mb-2">부크크 출판</h3>
+            <p className="text-gray-500 text-sm">
+              동화를 실제 종이책으로 출판해보세요
+            </p>
+          </div>
+        </Link>
       </section>
 
     </main>
