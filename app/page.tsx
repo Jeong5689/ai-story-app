@@ -31,17 +31,22 @@ export default function Home() {
                 {currentUser.email}
               </span>
               <Link href="/generate">
-                <button className="bg-purple-600 text-white px-4 py-2 rounded-lg hover:bg-purple-700 transition text-sm">
+                <button className="bg-purple-600 text-white px-3 py-2 rounded-lg hover:bg-purple-700 transition text-sm">
                   AI 동화
                 </button>
               </Link>
               <Link href="/create">
-                <button className="bg-pink-500 text-white px-4 py-2 rounded-lg hover:bg-pink-600 transition text-sm">
+                <button className="bg-pink-500 text-white px-3 py-2 rounded-lg hover:bg-pink-600 transition text-sm">
                   ✏️ 직접 쓰기
                 </button>
               </Link>
+              <Link href="/community">
+                <button className="bg-blue-500 text-white px-3 py-2 rounded-lg hover:bg-blue-600 transition text-sm">
+                  💬 커뮤니티
+                </button>
+              </Link>
               <Link href="/library">
-                <button className="border border-purple-600 text-purple-600 px-4 py-2 rounded-lg hover:bg-purple-50 transition text-sm">
+                <button className="border border-purple-600 text-purple-600 px-3 py-2 rounded-lg hover:bg-purple-50 transition text-sm">
                   내 동화함
                 </button>
               </Link>
@@ -95,7 +100,7 @@ export default function Home() {
       </section>
 
       {/* 기능 소개 섹션 */}
-      <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-5xl mx-auto px-8 pb-20">
+      <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6 max-w-6xl mx-auto px-8 pb-20">
         <Link href="/generate">
           <div className="bg-white rounded-2xl p-6 shadow-sm text-center cursor-pointer hover:shadow-md transition">
             <div className="text-4xl mb-4">✍️</div>
@@ -132,8 +137,17 @@ export default function Home() {
             </p>
           </div>
         </Link>
-      </section>
 
+      </section>
+<Link href="/community">
+          <div className="bg-white rounded-2xl p-6 shadow-sm text-center cursor-pointer hover:shadow-md transition border-2 border-blue-100">
+            <div className="text-4xl mb-4">💬</div>
+            <h3 className="text-lg font-bold text-gray-800 mb-2">커뮤니티</h3>
+            <p className="text-gray-500 text-sm">
+              동화를 공유하고 이야기를 나눠보세요
+            </p>
+          </div>
+        </Link>
     </main>
   );
 }
