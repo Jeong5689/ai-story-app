@@ -1,9 +1,10 @@
 'use client';
-// 회원가입 페이지
+// 회원가입 페이지 — 개인정보보호 동의서 팝업 포함
 import { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { signUp } from '../../lib/authService';
+import PrivacyModal from '../../components/PrivacyModal';
 
 export default function SignupPage() {
   const router = useRouter();
@@ -12,8 +13,11 @@ export default function SignupPage() {
   const [passwordConfirm, setPasswordConfirm] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
+  const [showPrivacyModal, setShowPrivacyModal] = useState(false);
+  const [agreedToTerms, setAgreedToTerms] = useState(false);
 
-  async function handleSignup() {
+  // 가입하기 버튼 클릭 시 동의서 팝업 먼저 표시
+  function handleSignupClick() {
     if (!email.trim() || !password.trim()) {
       setErrorMessage('이메일과 비밀번호를 입력해주세요');
       return;
@@ -26,13 +30,19 @@ export default function SignupPage() {
       setErrorMessage('비밀번호는 6자 이상이어야 합니다');
       return;
     }
-
-    setIsLoading(true);
     setErrorMessage('');
+    // 동의서 팝업 표시
+    setShowPrivacyModal(true);
+  }
+
+  // 동의서 동의 후 실제 회원가입 진행
+  async function handleAgreeAndSignup() {
+    setShowPrivacyModal(false);
+    setAgreedToTerms(true);
+    setIsLoading(true);
 
     try {
       await signUp(email, password);
-      // 회원가입 성공 시 홈으로 이동
       router.push('/');
     } catch (error: unknown) {
       console.error('회원가입 오류:', error);
@@ -53,6 +63,15 @@ export default function SignupPage() {
 
   return (
     <main className="min-h-screen bg-gradient-to-b from-purple-50 to-white flex items-center justify-center px-4">
+
+      {/* 개인정보보호 동의서 팝업 */}
+      {showPrivacyModal && (
+        <PrivacyModal
+          onAgree={handleAgreeAndSignup}
+          onClose={() => setShowPrivacyModal(false)}
+        />
+      )}
+
       <div className="w-full max-w-md">
 
         {/* 로고 */}
@@ -109,10 +128,17 @@ export default function SignupPage() {
               value={passwordConfirm}
               onChange={(e) => setPasswordConfirm(e.target.value)}
               placeholder="비밀번호 재입력"
-              onKeyDown={(e) => e.key === 'Enter' && handleSignup()}
+              onKeyDown={(e) => e.key === 'Enter' && handleSignupClick()}
               className="w-full border border-gray-200 rounded-xl px-4 py-3 focus:outline-none focus:border-purple-400"
             />
           </div>
+
+          {/* 동의 완료 표시 */}
+          {agreedToTerms && (
+            <div className="bg-green-50 text-green-600 rounded-xl px-4 py-3 mb-4 text-sm flex items-center gap-2">
+              <span>✓</span> 이용약관 및 개인정보 수집에 동의하셨습니다
+            </div>
+          )}
 
           {/* 오류 메시지 */}
           {errorMessage && (
@@ -123,7 +149,7 @@ export default function SignupPage() {
 
           {/* 회원가입 버튼 */}
           <button
-            onClick={handleSignup}
+            onClick={handleSignupClick}
             disabled={isLoading}
             className="w-full bg-purple-600 text-white text-lg py-4 rounded-2xl hover:bg-purple-700 transition disabled:opacity-50"
           >

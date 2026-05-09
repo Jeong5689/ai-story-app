@@ -50,6 +50,11 @@ export default function Home() {
                   내 동화함
                 </button>
               </Link>
+              <Link href="/mypage">
+                <button className="border border-gray-300 text-gray-600 px-3 py-2 rounded-lg hover:bg-gray-50 transition text-sm">
+                  👤 마이페이지
+                </button>
+              </Link>
               <button
                 onClick={handleLogout}
                 className="text-gray-400 text-sm hover:text-gray-600 transition"
