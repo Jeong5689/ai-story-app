@@ -50,7 +50,7 @@ export default function AdminPage() {
     try {
       // 전체 동화 조회
       const storiesSnapshot = await getDocs(
-        query(collection(db, 'stories'), orderBy('createdAt', 'desc'))
+        collection(db, 'stories')
       );
       const stories = storiesSnapshot.docs.map(doc => ({
         id: doc.id,
