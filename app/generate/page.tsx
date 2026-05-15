@@ -249,6 +249,10 @@ export default function GeneratePage() {
                 <option value="5">5~6세</option>
                 <option value="7">7~8세</option>
                 <option value="9">9~10세</option>
+                <option value="11">11~12세</option>
+                <option value="13">13~14세</option>
+                <option value="15">15~16세</option>
+                <option value="17">17~18세</option>
               </select>
             </div>
 
@@ -298,8 +302,7 @@ export default function GeneratePage() {
                 className="w-full rounded-2xl mb-8 shadow-sm"
               />
             )}
-                  ? 'text-2xl font-bold text-purple-700'
-                  <div className="prose max-w-none">
+            <div className="prose max-w-none">
               {result.storyText.split('\n').map((line, index) => (
                 <p
                   key={index}

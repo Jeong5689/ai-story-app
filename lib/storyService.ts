@@ -3,6 +3,8 @@ import {
     collection,
     addDoc,
     getDocs,
+    deleteDoc,
+    doc,
     query,
     where,
     orderBy,
@@ -44,8 +46,13 @@ import {
       orderBy('createdAt', 'desc')
     );
     const snapshot = await getDocs(storiesQuery);
-    return snapshot.docs.map((doc) => ({
-      id: doc.id,
-      ...doc.data(),
+    return snapshot.docs.map((docSnap) => ({
+      id: docSnap.id,
+      ...docSnap.data(),
     } as Story));
+  }
+
+  // 동화 삭제 함수
+  export async function deleteStory(storyId: string): Promise<void> {
+    await deleteDoc(doc(db, 'stories', storyId));
   }

@@ -3,13 +3,26 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '../../components/AuthContext';
-import { getUserStories, Story } from '../../lib/storyService';
+import { getUserStories, deleteStory, Story } from '../../lib/storyService';
 import TTSPlayer from '../../components/TTSPlayer';
 
 export default function LibraryPage() {
   const [stories, setStories] = useState<Story[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [selectedStory, setSelectedStory] = useState<Story | null>(null);
+
+  // 동화 삭제 함수
+  async function handleDeleteStory(storyId: string, e: React.MouseEvent) {
+    e.stopPropagation();
+    if (!confirm('이 동화를 삭제하시겠습니까?')) return;
+    try {
+      await deleteStory(storyId);
+      setStories(prev => prev.filter(s => s.id !== storyId));
+    } catch (error) {
+      console.error('삭제 오류:', error);
+      alert('삭제 중 오류가 발생했습니다.');
+    }
+  }
 
   useEffect(() => {
     // 임시 userId — 나중에 로그인 연동 시 교체
@@ -105,18 +118,24 @@ export default function LibraryPage() {
                   {story.createdAt?.toDate?.()?.toLocaleDateString('ko-KR') || ''}
                 </p>
                 <div className="flex gap-2">
-                  <button
-                    onClick={() => setSelectedStory(story)}
-                    className="flex-1 border border-purple-600 text-purple-600 py-2 rounded-xl text-xs hover:bg-purple-50 transition"
-                  >
-                    📖 읽기
-                  </button>
-                  <Link href="/publish" className="flex-1">
-                    <button className="w-full bg-purple-600 text-white py-2 rounded-xl text-xs hover:bg-purple-700 transition">
-                      📚 출판하기
+                    <button
+                      onClick={() => setSelectedStory(story)}
+                      className="flex-1 border border-purple-600 text-purple-600 py-2 rounded-xl text-xs hover:bg-purple-50 transition"
+                    >
+                      📖 읽기
                     </button>
-                  </Link>
-                </div>
+                    <Link href="/publish" className="flex-1">
+                      <button className="w-full bg-purple-600 text-white py-2 rounded-xl text-xs hover:bg-purple-700 transition">
+                        📚 출판
+                      </button>
+                    </Link>
+                    <button
+                      onClick={(e) => handleDeleteStory(story.id!, e)}
+                      className="border border-red-300 text-red-400 py-2 px-3 rounded-xl text-xs hover:bg-red-50 transition"
+                    >
+                      🗑️
+                    </button>
+                  </div>
               </div>
             </div>
             ))}
