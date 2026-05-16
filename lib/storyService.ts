@@ -4,6 +4,7 @@ import {
     addDoc,
     getDocs,
     deleteDoc,
+    updateDoc,
     doc,
     query,
     where,
@@ -55,4 +56,12 @@ import {
   // 동화 삭제 함수
   export async function deleteStory(storyId: string): Promise<void> {
     await deleteDoc(doc(db, 'stories', storyId));
+  }
+
+  // 동화 일부 필드 수정 (제목·본문·삽화 URL 등)
+  export async function updateStory(
+    storyId: string,
+    updates: Partial<Pick<Story, 'childName' | 'storyText' | 'imageUrl'>>
+  ): Promise<void> {
+    await updateDoc(doc(db, 'stories', storyId), updates);
   }
