@@ -7,6 +7,7 @@ import {
     User,
   } from 'firebase/auth';
   import { auth } from './firebase';
+  import { signInAnonymously } from 'firebase/auth';
   
   // 회원가입
   export async function signUp(
@@ -44,4 +45,13 @@ import {
     callback: (user: User | null) => void
   ) {
     return onAuthStateChanged(auth, callback);
+  }
+
+  // 인증 보장: 로그인 사용자가 있으면 그대로 사용, 없으면 익명 로그인
+  export async function ensureAuth(): Promise<User> {
+    if (auth.currentUser) {
+      return auth.currentUser;
+    }
+    const cred = await signInAnonymously(auth);
+    return cred.user;
   }

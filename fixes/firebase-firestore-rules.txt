@@ -1,0 +1,48 @@
+Firebase Firestore 권한 규칙 예제
+
+- 이 앱은 `stories` 컬렉션에 문서를 저장합니다.
+- 문서는 `userId` 필드를 포함하며, 문서를 생성/읽기/수정/삭제할 때 인증된 사용자 UID와 일치해야 합니다.
+- `userId`는 `request.auth.uid`와 동일해야 합니다.
+
+추천 규칙:
+
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /stories/{storyId} {
+      allow create: if request.auth != null
+        && request.resource.data.userId == request.auth.uid
+        && request.resource.data.keys().hasAll([
+          'userId', 'childName', 'theme', 'ageGroup', 'moral', 'storyText', 'imageUrl', 'createdAt'
+        ])
+        && request.resource.data.userId is string
+        && request.resource.data.childName is string
+        && request.resource.data.theme is string
+        && request.resource.data.ageGroup is string
+        && request.resource.data.moral is string
+        && request.resource.data.storyText is string
+        && request.resource.data.imageUrl is string;
+
+      allow read: if request.auth != null
+        && resource.data.userId == request.auth.uid;
+
+      allow update, delete: if request.auth != null
+        && resource.data.userId == request.auth.uid;
+    }
+  }
+}
+
+Firebase 콘솔에서 적용 방법:
+1) Firebase Console > Firestore > Rules
+2) 위 규칙을 붙여넣고 배포
+
+Firebase CLI로 적용 방법:
+1) Firebase CLI 설치: `npm install -g firebase-tools`
+2) 프로젝트 루트에서 로그인: `firebase login`
+3) 프로젝트 선택: `firebase use default`
+4) 규칙 배포: `firebase deploy --only firestore:rules`
+
+추가 확인:
+- Authentication > Sign-in method > Anonymous가 활성화되어 있는지 확인
+- Firestore 규칙이 위와 같은지 확인
+- 여전히 오류가 발생하면, 브라우저 콘솔과 서버 로그에서 `currentUser` UID와 `saveStory()` 호출 데이터를 확인하세요.

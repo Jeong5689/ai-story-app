@@ -118,7 +118,7 @@ export default function BoardWritePage() {
   }
 
   return (
-    <main className="min-h-screen bg-gradient-to-b from-purple-50 to-white">
+    <main className="min-h-screen bg-linear-to-b from-purple-50 to-white">
 
       {/* 네비게이션 */}
       <nav className="flex justify-between items-center px-8 py-4 bg-white shadow-sm">
@@ -206,7 +206,7 @@ export default function BoardWritePage() {
                         <img
                           src={story.imageUrl}
                           alt="표지"
-                          className="w-12 h-12 object-cover rounded-lg flex-shrink-0"
+                          className="w-12 h-12 object-cover rounded-lg shrink-0"
                         />
                       )}
                       <div>

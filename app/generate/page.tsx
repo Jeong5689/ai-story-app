@@ -1,9 +1,8 @@
 'use client';
 import { useState } from 'react';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
-import { useAuth } from '../../components/AuthContext';
 import { saveStory } from '../../lib/storyService';
+import { ensureAuth } from '../../lib/authService';
 import TTSPlayer from '../../components/TTSPlayer';
 
 interface StoryResult {
@@ -12,8 +11,6 @@ interface StoryResult {
 }
 
 export default function GeneratePage() {
-  const { currentUser } = useAuth();
-  const router = useRouter();
   const [childName, setChildName] = useState('');
   const [theme, setTheme] = useState('');
   const [ageGroup, setAgeGroup] = useState('5');
@@ -22,6 +19,19 @@ export default function GeneratePage() {
   const [loadingStep, setLoadingStep] = useState('');
   const [result, setResult] = useState<StoryResult | null>(null);
   const [errorMessage, setErrorMessage] = useState('');
+  const [saveWarning, setSaveWarning] = useState('');
+
+  // Firebase 오류를 사용자 친화적 메시지로 변환
+  function getFirebaseErrorMessage(error: unknown): string {
+    const code = (error as { code?: string })?.code;
+    if (code === 'permission-denied') {
+      return '동화는 생성됐지만 저장에 실패했습니다. Firebase Firestore 규칙을 배포해주세요.';
+    }
+    if (code === 'auth/operation-not-allowed') {
+      return '익명 로그인이 비활성화되어 있습니다. Firebase 콘솔에서 Anonymous 로그인을 활성화해주세요.';
+    }
+    return (error as Error)?.message || '동화 저장 중 오류가 발생했습니다.';
+  }
 
   // PDF 다운로드 함수 (한글 지원)
   async function handleDownloadPDF() {
@@ -109,17 +119,15 @@ export default function GeneratePage() {
 
   // 동화 생성 함수
   async function handleGenerate() {
-    // 로그인 확인
-    if (!currentUser) {
-      router.push('/login');
-      return;
-    }
+    // 현재 인증 상태가 아직 로드되지 않았을 수 있으므로,
+    // saveStory 내부에서 익명 로그인 또는 기존 로그인 인증을 보장합니다.
     if (!childName.trim() || !theme.trim()) {
       setErrorMessage('이름과 테마를 모두 입력해주세요');
       return;
     }
     setIsLoading(true);
     setErrorMessage('');
+    setSaveWarning('');
     setResult(null);
 
     try {
@@ -147,26 +155,33 @@ export default function GeneratePage() {
         throw new Error(imageData.error || '이미지 생성 실패');
       }
 
-      const storyResult = {
+const storyResult = {
         storyText: storyData.story,
         imageUrl: imageData.imageUrl,
       };
 
-      await saveStory({
-        userId: currentUser.uid,
-        childName,
-        theme,
-        ageGroup,
-        moral,
-        storyText: storyData.story,
-        imageUrl: imageData.imageUrl,
-      });
-
+      // 결과 먼저 표시
       setResult(storyResult);
 
-    } catch (error) {
-      console.error('생성 오류:', error);
-      setErrorMessage('동화 생성 중 오류가 발생했습니다. 다시 시도해주세요.');
+      // Firestore 저장 시도 (실패해도 결과는 표시)
+      try {
+        await ensureAuth();
+        await saveStory({
+          childName,
+          theme,
+          ageGroup,
+          moral,
+          storyText: storyData.story,
+          imageUrl: imageData.imageUrl,
+        });
+      } catch (saveError: unknown) {
+        console.error('저장 실패:', saveError);
+        setSaveWarning(getFirebaseErrorMessage(saveError));
+      }
+
+    } catch (error: unknown) {
+      console.error('생성 오류 상세:', error);
+      setErrorMessage(`오류: ${(error as Error)?.message || '동화 생성 중 오류가 발생했습니다.'}`);
     } finally {
       setIsLoading(false);
       setLoadingStep('');
@@ -174,7 +189,7 @@ export default function GeneratePage() {
   }
 
   return (
-    <main className="min-h-screen bg-gradient-to-b from-purple-50 to-white">
+    <main className="min-h-screen bg-linear-to-b from-purple-50 to-white">
 
       <nav className="flex justify-between items-center px-8 py-4 bg-white shadow-sm">
         <Link href="/">
@@ -295,6 +310,11 @@ export default function GeneratePage() {
 
         {result && (
           <div className="bg-white rounded-2xl shadow-sm p-8">
+            {saveWarning && (
+              <div className="bg-yellow-50 text-yellow-800 rounded-xl px-4 py-3 mb-6 text-sm">
+                ⚠️ {saveWarning}
+              </div>
+            )}
             {result.imageUrl && (
               <img
                 src={result.imageUrl}

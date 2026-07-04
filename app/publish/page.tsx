@@ -182,7 +182,7 @@ export default function PublishPage() {
   }
 
   return (
-    <main className="min-h-screen bg-gradient-to-b from-purple-50 to-white">
+    <main className="min-h-screen bg-linear-to-b from-purple-50 to-white">
 
       {/* 네비게이션 */}
       <nav className="flex justify-between items-center px-8 py-4 bg-white shadow-sm">
@@ -256,7 +256,7 @@ export default function PublishPage() {
         {/* 안내 문구 */}
         <div className="bg-yellow-50 border border-yellow-200 rounded-2xl p-4 mb-8">
           <div className="flex items-start gap-3">
-            <span className="text-xl flex-shrink-0">⚠️</span>
+            <span className="text-xl shrink-0">⚠️</span>
             <p className="text-sm text-yellow-800 leading-relaxed">
               자가출판 플랫폼을 활용하면 비용 없이 전자책(eBook)을 직접 제작하고 교보문고, 알라딘 등 주요 서점에 유통할 수 있으나,
               <span className="font-bold"> 출판에 따른 수수료 및 출판에 대한 모든 책임은 출판자에게 있습니다.</span>
@@ -372,7 +372,7 @@ export default function PublishPage() {
                           }`}
                         >
                           {story.imageUrl && (
-                            <img src={story.imageUrl} alt="표지" className="w-14 h-14 object-cover rounded-lg flex-shrink-0" />
+                            <img src={story.imageUrl} alt="표지" className="w-14 h-14 object-cover rounded-lg shrink-0" />
                           )}
                           <div className="flex-1">
                             <p className="font-bold text-gray-800">{story.childName}의 동화</p>

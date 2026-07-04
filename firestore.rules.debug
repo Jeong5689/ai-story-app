@@ -1,0 +1,94 @@
+// DEBUG: Stepwise Firestore rules to isolate which condition fails.
+// Usage:
+// 1) Copy one of the `match /stories/{storyId}` blocks below into your active `firestore.rules`.
+// 2) Deploy with: `firebase deploy --only firestore:rules` (or paste into Console Rules editor).
+// 3) Run the Rules Simulator or app to test create with uid = the failing UID.
+// 4) Observe Allow / Deny and error details; proceed to next variant as needed.
+
+// -------------------------
+// 0) Original / Baseline (for reference)
+// -------------------------
+// match /stories/{storyId} {
+//   allow create: if request.auth != null
+//     && request.resource.data.userId == request.auth.uid
+//     && request.resource.data.keys().hasAll([
+//       'userId', 'childName', 'theme', 'ageGroup', 'moral', 'storyText', 'imageUrl', 'createdAt'
+//     ])
+//     && request.resource.data.userId is string
+//     && request.resource.data.childName is string
+//     && request.resource.data.theme is string
+//     && request.resource.data.ageGroup is string
+//     && request.resource.data.moral is string
+//     && request.resource.data.storyText is string
+//     && request.resource.data.imageUrl is string;
+// }
+
+// -------------------------
+// Variant A: AUTH-ONLY (quick check: is auth the problem?)
+// If this allows the write, app auth/project mismatch is unlikely.
+// -------------------------
+match /stories/{storyId} {
+  // Allow any authenticated user to create — temporary debug only
+  allow create: if request.auth != null;
+  allow read: if request.auth != null && resource.data.userId == request.auth.uid;
+  allow update, delete: if request.auth != null && resource.data.userId == request.auth.uid;
+}
+
+// -------------------------
+// Variant B: CHECK userId equality only (narrow test)
+// Tests whether `request.resource.data.userId == request.auth.uid` is failing.
+// -------------------------
+// match /stories/{storyId} {
+//   allow create: if request.auth != null && request.resource.data.userId == request.auth.uid;
+//   allow read: if request.auth != null && resource.data.userId == request.auth.uid;
+//   allow update, delete: if request.auth != null && resource.data.userId == request.auth.uid;
+// }
+
+// -------------------------
+// Variant C: KEYS only (test that all keys exist; skip type checks and userId equality)
+// If this fails, a required field is missing from the client's payload.
+// -------------------------
+// match /stories/{storyId} {
+//   allow create: if request.auth != null
+//     && request.resource.data.keys().hasAll([
+//       'userId', 'childName', 'theme', 'ageGroup', 'moral', 'storyText', 'imageUrl', 'createdAt'
+//     ]);
+//   allow read: if request.auth != null && resource.data.userId == request.auth.uid;
+//   allow update, delete: if request.auth != null && resource.data.userId == request.auth.uid;
+// }
+
+// -------------------------
+// Variant D: KEYS + userId but no type checks
+// -------------------------
+// match /stories/{storyId} {
+//   allow create: if request.auth != null
+//     && request.resource.data.keys().hasAll([
+//       'userId', 'childName', 'theme', 'ageGroup', 'moral', 'storyText', 'imageUrl', 'createdAt'
+//     ])
+//     && request.resource.data.userId == request.auth.uid;
+//   allow read: if request.auth != null && resource.data.userId == request.auth.uid;
+//   allow update, delete: if request.auth != null && resource.data.userId == request.auth.uid;
+// }
+
+// -------------------------
+// Notes & Common pitfalls
+// -------------------------
+// - `createdAt` in client payload: your client sets `createdAt: Timestamp.now()` (a Firestore Timestamp object)
+//   but the Rules simulator may need a `timestampValue` wrapper or you can omit `createdAt` from the simulated payload
+//   since your rules only check for key presence or type.
+// - Type checks (`... is string`) fail if the value is an object (e.g., you send a Timestamp object).
+//   If you check `createdAt` types in rules, prefer checking for `request.resource.data.createdAt is timestamp`.
+// - If Variant A (auth-only) allows the write but original denies, then the blocking condition is inside the detailed checks
+//   (keys/types/userId equality). Use Variant B/C/D to localize further.
+// - After debugging, always restore strict rules.
+
+// -------------------------
+// Quick deploy example (local CLI)
+// -------------------------
+// 1) Backup current rules: cp firestore.rules firestore.rules.bak
+// 2) Replace firestore.rules contents with the desired variant
+// 3) Deploy: firebase deploy --only firestore:rules
+// 4) Test using Rules Simulator or app
+// 5) Restore original rules and deploy again
+
+// End of debug file

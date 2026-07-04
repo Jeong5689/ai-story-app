@@ -157,7 +157,7 @@ export default function MyPage() {
   }
 
   return (
-    <main className="min-h-screen bg-gradient-to-b from-purple-50 to-white">
+    <main className="min-h-screen bg-linear-to-b from-purple-50 to-white">
 
       {/* 네비게이션 */}
       <nav className="flex justify-between items-center px-8 py-4 bg-white shadow-sm">

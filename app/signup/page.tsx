@@ -62,7 +62,7 @@ export default function SignupPage() {
   }
 
   return (
-    <main className="min-h-screen bg-gradient-to-b from-purple-50 to-white flex items-center justify-center px-4">
+    <main className="min-h-screen bg-linear-to-b from-purple-50 to-white flex items-center justify-center px-4">
 
       {/* 개인정보보호 동의서 팝업 */}
       {showPrivacyModal && (

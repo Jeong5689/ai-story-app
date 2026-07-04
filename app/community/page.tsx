@@ -86,7 +86,7 @@ export default function CommunityPage() {
   }
 
   return (
-    <main className="min-h-screen bg-gradient-to-b from-purple-50 to-white">
+    <main className="min-h-screen bg-linear-to-b from-purple-50 to-white">
 
       {/* 네비게이션 */}
       <nav className="flex justify-between items-center px-8 py-4 bg-white shadow-sm">
@@ -202,7 +202,7 @@ export default function CommunityPage() {
                       <img
                         src={post.imageUrl}
                         alt="썸네일"
-                        className="w-20 h-20 object-cover rounded-xl flex-shrink-0"
+                        className="w-20 h-20 object-cover rounded-xl shrink-0"
                       />
                     )}
                     <div className="flex-1 min-w-0">

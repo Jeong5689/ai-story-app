@@ -44,10 +44,15 @@ export async function POST(request: NextRequest) {
     const storyText = completion.choices[0].message.content || '';
     return NextResponse.json({ story: storyText });
 
-  } catch (error) {
-    console.error('동화 생성 오류:', error);
+  } catch (error: any) {
+    console.error('동화 생성 오류 상세:', {
+      message: error?.message,
+      status: error?.status,
+      code: error?.code,
+      stack: error?.stack,
+    });
     return NextResponse.json(
-      { error: '동화 생성에 실패했습니다' },
+      { error: error?.message || '동화 생성에 실패했습니다' },
       { status: 500 }
     );
   }

@@ -46,12 +46,14 @@ export default function Home() {
 
           {/* 별들 */}
           {[
-            [100,80],[200,150],[350,60],[500,120],[650,80],[800,100],[950,60],[1050,140],
-            [1150,80],[1300,100],[1380,60],[150,200],[400,180],[700,160],[1000,190],
-            [1250,170],[50,300],[300,280],[600,260],[900,280],[1200,260],[1400,300],
-          ].map(([x,y], i) => (
+            [100,80,0.7],[200,150,0.8],[350,60,0.6],[500,120,0.9],[650,80,0.7],
+            [800,100,0.8],[950,60,0.6],[1050,140,0.9],[1150,80,0.7],[1300,100,0.8],
+            [1380,60,0.6],[150,200,0.9],[400,180,0.7],[700,160,0.8],[1000,190,0.6],
+            [1250,170,0.9],[50,300,0.7],[300,280,0.8],[600,260,0.6],[900,280,0.9],
+            [1200,260,0.7],[1400,300,0.8],
+          ].map(([x,y,op], i) => (
             <g key={i}>
-              <circle cx={x} cy={y} r={i%3===0?4:i%3===1?3:2} fill="#FDE68A" opacity={0.6+Math.random()*0.4}/>
+              <circle cx={x} cy={y} r={i%3===0?4:i%3===1?3:2} fill="#FDE68A" opacity={op}/>
               <circle cx={x} cy={y} r={i%3===0?2:1} fill="white" opacity="0.9"/>
             </g>
           ))}
@@ -149,7 +151,7 @@ export default function Home() {
       </div>
 
       {/* 네비게이션 */}
-      <nav className="relative z-10 flex justify-between items-center px-6 py-3 bg-white/75 backdrop-blur-md shadow-sm flex-shrink-0">
+      <nav className="relative z-10 flex justify-between items-center px-6 py-3 bg-white/75 backdrop-blur-md shadow-sm shrink-0">
         <div className="text-xl font-bold text-purple-600">🌟 동화나라</div>
         <div className="flex gap-2 items-center flex-wrap justify-end">
           {isLoading ? (
@@ -234,7 +236,7 @@ export default function Home() {
       </div>
 
       {/* 푸터 */}
-      <footer className="relative z-10 text-center py-2 bg-white/60 backdrop-blur-sm flex-shrink-0">
+      <footer className="relative z-10 text-center py-2 bg-white/60 backdrop-blur-sm shrink-0">
         <p className="text-xs text-gray-400">
           © 2026 동화나라 · AI 창작동화 플랫폼 ·
           <Link href="/admin" className="ml-1 hover:text-purple-600 transition">관리자</Link>

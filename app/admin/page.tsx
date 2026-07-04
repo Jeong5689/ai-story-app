@@ -10,7 +10,7 @@ import { collection, getDocs, query, orderBy } from 'firebase/firestore';
 import { db } from '../../lib/firebase';
 
 // 관리자 이메일 설정 (본인 이메일로 변경)
-const ADMIN_EMAIL = 'ojt7470.s@gmail.com';
+const ADMIN_EMAIL = 'ojt7470@gmail.com';
 
 interface UserData {
   uid: string;
