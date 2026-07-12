@@ -1,7 +1,3 @@
 {
-  "version": 3,
-  "framework": "nextjs",
-  "build": {
-    "env": {}
-  }
+  "version": 2
 }

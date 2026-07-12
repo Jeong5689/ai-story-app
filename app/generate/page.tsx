@@ -131,6 +131,7 @@ export default function GeneratePage() {
     setResult(null);
 
     try {
+      await ensureAuth();
       setLoadingStep('✍️ 동화를 쓰고 있어요...');
       const storyResponse = await fetch('/api/generate-story', {
         method: 'POST',
@@ -175,7 +176,17 @@ const storyResult = {
           imageUrl: imageData.imageUrl,
         });
       } catch (saveError: unknown) {
-        console.error('저장 실패:', saveError);
+        console.error('저장 실패:', {
+          error: saveError,
+          storyPayload: {
+            childName,
+            theme,
+            ageGroup,
+            moral,
+            storyText: storyData.story,
+            imageUrl: imageData.imageUrl,
+          },
+        });
         setSaveWarning(getFirebaseErrorMessage(saveError));
       }
 

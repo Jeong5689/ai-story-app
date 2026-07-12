@@ -32,6 +32,9 @@ export async function saveStory(
   storyData: Omit<Story, 'id' | 'createdAt' | 'userId'>
 ): Promise<string> {
   const authUser = await ensureAuth();
+  if (!authUser?.uid) {
+    throw new Error('Firebase 인증 정보가 없습니다. 다시 로그인해주세요.');
+  }
 
   const docRef = await addDoc(collection(db, 'stories'), {
     ...storyData,

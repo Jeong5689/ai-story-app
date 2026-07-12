@@ -1,0 +1,61 @@
+[debug] [2026-07-05T12:19:54.974Z] ----------------------------------------------------------------------
+[debug] [2026-07-05T12:19:54.977Z] Command:       C:\nvm4w\nodejs\node.exe C:\nvm4w\nodejs\node_modules\firebase-tools\lib\bin\firebase.js deploy --only firestore:rules -P ai-story-app-199ff --debug
+[debug] [2026-07-05T12:19:54.978Z] CLI Version:   15.16.0
+[debug] [2026-07-05T12:19:54.978Z] Platform:      win32
+[debug] [2026-07-05T12:19:54.978Z] Node Version:  v20.20.2
+[debug] [2026-07-05T12:19:54.978Z] Time:          Sun Jul 05 2026 21:19:54 GMT+0900 (한국 표준시)
+[debug] [2026-07-05T12:19:54.978Z] ----------------------------------------------------------------------
+[debug] 
+[debug] [2026-07-05T12:19:57.220Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2026-07-05T12:19:57.221Z] > authorizing via signed-in user (ohjeongtaek.edu81@gmail.com)
+[debug] [2026-07-05T12:19:57.222Z] [iam] checking project ai-story-app-199ff for permissions ["datastore.indexes.create","datastore.indexes.delete","datastore.indexes.list","datastore.indexes.update","firebase.projects.get"]
+[debug] [2026-07-05T12:19:57.223Z] Checked if tokens are valid: true, expires at: 1783257571109
+[debug] [2026-07-05T12:19:57.224Z] Checked if tokens are valid: true, expires at: 1783257571109
+[debug] [2026-07-05T12:19:57.225Z] >>> [apiv2][query] POST https://cloudresourcemanager.googleapis.com/v1/projects/ai-story-app-199ff:testIamPermissions [none]
+[debug] [2026-07-05T12:19:57.225Z] >>> [apiv2][(partial)header] POST https://cloudresourcemanager.googleapis.com/v1/projects/ai-story-app-199ff:testIamPermissions  x-goog-user-project=ai-story-app-199ff
+[debug] [2026-07-05T12:19:57.225Z] >>> [apiv2][body] POST https://cloudresourcemanager.googleapis.com/v1/projects/ai-story-app-199ff:testIamPermissions {"permissions":["datastore.indexes.create","datastore.indexes.delete","datastore.indexes.list","datastore.indexes.update","firebase.projects.get"]}
+[debug] [2026-07-05T12:19:57.497Z] <<< [apiv2][status] POST https://cloudresourcemanager.googleapis.com/v1/projects/ai-story-app-199ff:testIamPermissions 200
+[debug] [2026-07-05T12:19:57.498Z] <<< [apiv2][body] POST https://cloudresourcemanager.googleapis.com/v1/projects/ai-story-app-199ff:testIamPermissions {"permissions":["datastore.indexes.create","datastore.indexes.delete","datastore.indexes.list","datastore.indexes.update","firebase.projects.get"]}
+[info] 
+[info] === Deploying to 'ai-story-app-199ff'...
+[info] 
+[info] i  deploying firestore 
+[info] i  firestore: ensuring required API firestore.googleapis.com is enabled... 
+[info] i  firestore: ensuring required API firestore.googleapis.com is enabled... 
+[debug] [2026-07-05T12:19:57.502Z] Checked if tokens are valid: true, expires at: 1783257571109
+[debug] [2026-07-05T12:19:57.502Z] Checked if tokens are valid: true, expires at: 1783257571109
+[debug] [2026-07-05T12:19:57.503Z] >>> [apiv2][query] GET https://firestore.googleapis.com/v1/projects/ai-story-app-199ff/databases/(default) [none]
+[debug] [2026-07-05T12:19:57.565Z] <<< [apiv2][status] GET https://firestore.googleapis.com/v1/projects/ai-story-app-199ff/databases/(default) 200
+[debug] [2026-07-05T12:19:57.565Z] <<< [apiv2][body] GET https://firestore.googleapis.com/v1/projects/ai-story-app-199ff/databases/(default) {"name":"projects/ai-story-app-199ff/databases/(default)","uid":"4a877f0f-63c1-429f-a783-6349d4670f1a","createTime":"2026-06-11T12:26:21.515639Z","updateTime":"2026-06-11T12:26:21.515639Z","locationId":"asia-northeast3","type":"FIRESTORE_NATIVE","concurrencyMode":"PESSIMISTIC","versionRetentionPeriod":"3600s","earliestVersionTime":"2026-07-05T11:19:57.399157Z","appEngineIntegrationMode":"DISABLED","keyPrefix":"v","pointInTimeRecoveryEnablement":"POINT_IN_TIME_RECOVERY_DISABLED","deleteProtectionState":"DELETE_PROTECTION_DISABLED","databaseEdition":"STANDARD","freeTier":true,"realtimeUpdatesMode":"REALTIME_UPDATES_MODE_ENABLED","etag":"IInWvOjCu5UDMInJhuGa/5QD"}
+[info] i  cloud.firestore: checking firestore.rules for compilation errors... 
+[debug] [2026-07-05T12:19:57.567Z] Checked if tokens are valid: true, expires at: 1783257571109
+[debug] [2026-07-05T12:19:57.567Z] Checked if tokens are valid: true, expires at: 1783257571109
+[debug] [2026-07-05T12:19:57.567Z] >>> [apiv2][query] POST https://firebaserules.googleapis.com/v1/projects/ai-story-app-199ff:test [none]
+[debug] [2026-07-05T12:19:57.568Z] >>> [apiv2][body] POST https://firebaserules.googleapis.com/v1/projects/ai-story-app-199ff:test [omitted]
+[debug] [2026-07-05T12:19:58.795Z] <<< [apiv2][status] POST https://firebaserules.googleapis.com/v1/projects/ai-story-app-199ff:test 200
+[debug] [2026-07-05T12:19:58.795Z] <<< [apiv2][body] POST https://firebaserules.googleapis.com/v1/projects/ai-story-app-199ff:test {}
+[info] +  cloud.firestore: rules file firestore.rules compiled successfully 
+[debug] [2026-07-05T12:19:58.797Z] Checked if tokens are valid: true, expires at: 1783257571109
+[debug] [2026-07-05T12:19:58.797Z] Checked if tokens are valid: true, expires at: 1783257571109
+[debug] [2026-07-05T12:19:58.798Z] >>> [apiv2][query] GET https://firebaserules.googleapis.com/v1/projects/ai-story-app-199ff/releases pageSize=10&pageToken=
+[debug] [2026-07-05T12:19:59.896Z] <<< [apiv2][status] GET https://firebaserules.googleapis.com/v1/projects/ai-story-app-199ff/releases 200
+[debug] [2026-07-05T12:19:59.896Z] <<< [apiv2][body] GET https://firebaserules.googleapis.com/v1/projects/ai-story-app-199ff/releases {"releases":[{"name":"projects/ai-story-app-199ff/releases/cloud.firestore","rulesetName":"projects/ai-story-app-199ff/rulesets/0818e1d8-354d-40f6-ab7a-6cc40df7a672","createTime":"2026-06-11T12:26:25.791476Z","updateTime":"2026-07-05T12:19:38.672785Z"}]}
+[debug] [2026-07-05T12:19:59.897Z] Checked if tokens are valid: true, expires at: 1783257571109
+[debug] [2026-07-05T12:19:59.897Z] Checked if tokens are valid: true, expires at: 1783257571109
+[debug] [2026-07-05T12:19:59.898Z] >>> [apiv2][query] GET https://firebaserules.googleapis.com/v1/projects/ai-story-app-199ff/rulesets/0818e1d8-354d-40f6-ab7a-6cc40df7a672 [none]
+[debug] [2026-07-05T12:20:00.992Z] <<< [apiv2][status] GET https://firebaserules.googleapis.com/v1/projects/ai-story-app-199ff/rulesets/0818e1d8-354d-40f6-ab7a-6cc40df7a672 200
+[debug] [2026-07-05T12:20:00.992Z] <<< [apiv2][body] GET https://firebaserules.googleapis.com/v1/projects/ai-story-app-199ff/rulesets/0818e1d8-354d-40f6-ab7a-6cc40df7a672 [omitted]
+[info] i  firestore: latest version of firestore.rules already up to date, skipping upload... 
+[debug] [2026-07-05T12:20:00.994Z] [rules] releasing cloud.firestore with ruleset projects/ai-story-app-199ff/rulesets/0818e1d8-354d-40f6-ab7a-6cc40df7a672
+[debug] [2026-07-05T12:20:00.995Z] Checked if tokens are valid: true, expires at: 1783257571109
+[debug] [2026-07-05T12:20:00.995Z] Checked if tokens are valid: true, expires at: 1783257571109
+[debug] [2026-07-05T12:20:00.996Z] >>> [apiv2][query] PATCH https://firebaserules.googleapis.com/v1/projects/ai-story-app-199ff/releases/cloud.firestore [none]
+[debug] [2026-07-05T12:20:00.996Z] >>> [apiv2][body] PATCH https://firebaserules.googleapis.com/v1/projects/ai-story-app-199ff/releases/cloud.firestore {"release":{"name":"projects/ai-story-app-199ff/releases/cloud.firestore","rulesetName":"projects/ai-story-app-199ff/rulesets/0818e1d8-354d-40f6-ab7a-6cc40df7a672"}}
+[debug] [2026-07-05T12:20:02.162Z] <<< [apiv2][status] PATCH https://firebaserules.googleapis.com/v1/projects/ai-story-app-199ff/releases/cloud.firestore 200
+[debug] [2026-07-05T12:20:02.163Z] <<< [apiv2][body] PATCH https://firebaserules.googleapis.com/v1/projects/ai-story-app-199ff/releases/cloud.firestore {"name":"projects/ai-story-app-199ff/releases/cloud.firestore","rulesetName":"projects/ai-story-app-199ff/rulesets/0818e1d8-354d-40f6-ab7a-6cc40df7a672","createTime":"2026-06-11T12:26:25.791476Z","updateTime":"2026-07-05T12:20:01.880140Z"}
+[debug] [2026-07-05T12:20:02.163Z] [rules] updated release projects/ai-story-app-199ff/releases/cloud.firestore
+[info] +  firestore: released rules firestore.rules to cloud.firestore 
+[info] 
+[info] +  Deploy complete! 
+[info] 
+[info] Project Console: https://console.firebase.google.com/project/ai-story-app-199ff/overview

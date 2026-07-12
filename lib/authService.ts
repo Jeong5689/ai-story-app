@@ -5,9 +5,9 @@ import {
     signOut,
     onAuthStateChanged,
     User,
+    signInAnonymously,
   } from 'firebase/auth';
   import { auth } from './firebase';
-  import { signInAnonymously } from 'firebase/auth';
   
   // 회원가입
   export async function signUp(
@@ -53,5 +53,28 @@ import {
       return auth.currentUser;
     }
     const cred = await signInAnonymously(auth);
-    return cred.user;
+    if (cred.user) {
+      return cred.user;
+    }
+
+    return new Promise<User>((resolve, reject) => {
+      const unsubscribe = onAuthStateChanged(
+        auth,
+        (user) => {
+          if (user) {
+            unsubscribe();
+            resolve(user);
+          }
+        },
+        (error) => {
+          unsubscribe();
+          reject(error);
+        }
+      );
+
+      setTimeout(() => {
+        unsubscribe();
+        reject(new Error('Firebase 인증 시간이 초과되었습니다. 다시 시도해주세요.'));
+      }, 5000);
+    });
   }
