@@ -29,7 +29,7 @@ export interface Story {
   
 // 동화 저장 함수
 export async function saveStory(
-  storyData: Omit<Story, 'id' | 'createdAt' | 'userId'>
+  storyData: Omit<Story, 'id' | 'createdAt'>
 ): Promise<string> {
   const authUser = await ensureAuth();
   if (!authUser?.uid) {
