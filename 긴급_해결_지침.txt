@@ -1,0 +1,121 @@
+긴급 해결 지침 - Firebase 저장 및 이미지 문제
+==============================================
+
+현재 문제:
+1. Firebase에 저장되지 않음
+2. 동화 삽화가 그려지지 않음
+
+============================================================================
+1단계: Firebase 저장 문제 해결 (즉시 실행)
+============================================================================
+
+Firebase Console에서 Firestore 규칙 수정:
+
+1. https://console.firebase.google.com/ 접속
+2. 프로젝트: ai-story-app-199ff 선택
+3. Firestore Database → 규칙(Rules) 탭
+4. 기존 규칙 전체 삭제
+5. 아래 규칙 붙여넣기:
+
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /stories/{storyId} {
+      allow create: if request.auth != null;
+      allow read, update, delete: if request.auth != null
+        && resource.data.userId == request.auth.uid;
+    }
+    match /posts/{postId} {
+      allow read: if true;
+      allow create: if request.auth != null
+        && request.resource.data.userId == request.auth.uid;
+      allow update, delete: if request.auth != null
+        && resource.data.userId == request.auth.uid;
+    }
+    match /comments/{commentId} {
+      allow read: if true;
+      allow create: if request.auth != null
+        && request.resource.data.userId == request.auth.uid;
+      allow update, delete: if request.auth != null
+        && resource.data.userId == request.auth.uid;
+    }
+  }
+}
+
+6. "게시(Publish)" 버튼 클릭
+
+============================================================================
+2단계: 로그인 확인
+============================================================================
+
+1. 브라우저 새로고침
+2. /login 페이지로 이동
+3. 로그인 수행
+4. 로그인 완료 후 동화 생성/저장 시도
+
+============================================================================
+3단계: 이미지 문제 해결 (Cloudinary 설정)
+============================================================================
+
+.env.local 파일에 다음 환경변수가 있는지 확인:
+
+CLOUDINARY_CLOUD_NAME=your_cloud_name
+CLOUDINARY_API_KEY=your_api_key  
+CLOUDINARY_API_SECRET=your_api_secret
+
+없는 경우:
+1. https://cloudinary.com/ 접속
+2. 무료 계정 가입
+3. Dashboard → Settings → Account Details
+4. Cloud name, API Key, API Secret 복사
+5. .env.local 파일에 위 형식으로 추가
+6. 개발 서버 재시작 (Ctrl+C → npm run dev)
+
+============================================================================
+4단계: 임시 해결책 (Cloudinary 설정 전까지)
+============================================================================
+
+이미지 없이 텍스트만 저장하도록 임시 수정:
+
+app/create/page.tsx에서 이미지 업로드 부분 주석 처리:
+
+  // 이미지가 있으면 Cloudinary에 업로드 (임시 비활성화)
+  /*
+  if (imageFile) {
+    setIsUploading(true);
+    const formData = new FormData();
+    formData.append('file', imageFile);
+    const uploadResponse = await fetch('/api/upload-image', {
+      method: 'POST',
+      body: formData,
+    });
+    const uploadData = await uploadResponse.json();
+    if (!uploadResponse.ok) {
+      throw new Error(uploadData.error || '이미지 업로드 실패');
+    }
+    imageUrl = uploadData.imageUrl;
+    setIsUploading(false);
+  }
+  */
+
+이렇게 하면 이미지 없이 텍스트만 저장됩니다.
+
+============================================================================
+5단계: AI 동화 만들기 페이지 이미지
+============================================================================
+
+/generate 페이지는 pollinations.ai API를 사용하므로 Cloudinary 없이도 작동합니다.
+
+이미지가 안 그려지는 경우:
+1. 브라우저 콘솔(F12)에서 에러 확인
+2. Network 탭에서 generate-image API 요청 확인
+3. 이미지 URL이 올바르게 반환되는지 확인
+
+==========================================================================
+우선순위
+==========================================================================
+
+1. Firebase Console 규칙 수정 (가장 중요)
+2. 로그인 재시도
+3. Cloudinary 환경변수 설정
+4. 개발 서버 재시작

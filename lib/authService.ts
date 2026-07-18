@@ -71,3 +71,12 @@ export async function ensureAuth(): Promise<User> {
     }, 5000);
   });
 }
+
+// 인증 토큰 강제 갱신
+export async function forceRefreshAuth(): Promise<User> {
+  if (!auth.currentUser) {
+    throw new Error('로그인이 필요합니다.');
+  }
+  await auth.currentUser.getIdToken(true); // 토큰 강제 갱신
+  return auth.currentUser;
+}

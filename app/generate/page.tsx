@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '../../components/AuthContext';
 import { saveStory } from '../../lib/storyService';
+import { forceRefreshAuth } from '../../lib/authService';
 import TTSPlayer from '../../components/TTSPlayer';
 
 interface StoryResult {
@@ -159,6 +160,12 @@ export default function GeneratePage() {
 
       // Firestore 저장 시도 (실패해도 결과는 표시)
       try {
+        if (!currentUser) {
+          throw new Error('로그인이 필요합니다.');
+        }
+        // 인증 토큰 강제 갱신
+        await forceRefreshAuth();
+        
         await saveStory({
           userId: currentUser.uid,
           childName,
@@ -170,7 +177,8 @@ export default function GeneratePage() {
         });
       } catch (saveError: unknown) {
         console.error('저장 실패:', saveError);
-        setSaveWarning('동화는 생성됐지만 저장에 실패했습니다. 로그인 상태를 확인해주세요.');
+        const errorMessage = saveError instanceof Error ? saveError.message : '저장에 실패했습니다.';
+        setSaveWarning(`동화는 생성됐지만 저장에 실패했습니다: ${errorMessage} 로그인 상태를 확인해주세요.`);
       }
 
     } catch (error: unknown) {
@@ -183,7 +191,7 @@ export default function GeneratePage() {
   }
 
   return (
-    <main className="min-h-screen bg-gradient-to-b from-purple-50 to-white">
+    <main className="min-h-screen bg-linear-to-b from-purple-50 to-white">
 
       <nav className="flex justify-between items-center px-8 py-4 bg-white shadow-sm">
         <Link href="/">

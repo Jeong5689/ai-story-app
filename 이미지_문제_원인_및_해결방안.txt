@@ -1,0 +1,194 @@
+이미지 표시 문제 원인 분석 및 해결방안
+=========================================
+
+문제: 이미지가 표시되지 않음
+발생 위치: app/create/page.tsx (직접 만들기), app/generate/page.tsx (AI 동화 만들기)
+
+============================================================================
+1. 원인 분석
+============================================================================
+
+1.1 Cloudinary 환경변수 미설정
+-----------------------------
+필요한 환경변수 (.env.local 파일):
+- CLOUDINARY_CLOUD_NAME
+- CLOUDINARY_API_KEY
+- CLOUDINARY_API_SECRET
+
+현재 상태:
+- app/api/upload-image/route.ts에서 환경변수 확인 로직 있음
+- 환경변수가 없으면 콘솔에 에러 로그 출력
+- 이미지 업로드 실패 시 "이미지 업로드에 실패했습니다" 에러 반환
+
+1.2 이미지 업로드 실패
+----------------------
+가능한 원인:
+- Cloudinary 계정 없음
+- API 키가 잘못됨
+- 파일 크기 제한 초과 (현재 5MB 제한)
+- 지원하지 않는 파일 형식
+
+1.3 이미지 URL 반환 실패
+------------------------
+- Cloudinary 업로드 성공하지만 URL 반환 실패
+- 프론트엔드에서 imageUrl 상태가 업데이트되지 않음
+
+============================================================================
+2. 해결방안
+============================================================================
+
+2.1 Cloudinary 계정 생성 및 설정
+---------------------------------
+단계 1: Cloudinary 계정 생성
+1. https://cloudinary.com/ 접속
+2. 무료 계정 가입 (Sign Up)
+3. 이메일 인증 완료
+
+단계 2: API 키 확인
+1. Cloudinary Dashboard 접속
+2. 상단 메뉴에서 "Settings" 클릭
+3. "Account Details" 탭에서 다음 정보 확인:
+   - Cloud name
+   - API Key
+   - API Secret
+
+단계 3: .env.local 파일에 환경변수 추가
+파일: c:\Users\user\Documents\ai-story-app\.env.local
+
+다음 내용 추가 (실제 값으로 대체):
+CLOUDINARY_CLOUD_NAME=your_cloud_name
+CLOUDINARY_API_KEY=your_api_key
+CLOUDINARY_API_SECRET=your_api_secret
+
+주의:
+- .env.local 파일은 .gitignore로 보호됨
+- 값은 실제 Cloudinary 계정 정보로 교체 필요
+- 공개 repository에 절대 커밋하지 말 것
+
+2.2 개발 서버 재시작
+---------------------
+환경변수 추가 후:
+1. 터미널에서 개발 서버 중단 (Ctrl+C)
+2. 다시 시작: npm run dev
+3. 브라우저 새로고침
+
+2.3 이미지 업로드 테스트
+-----------------------
+1. /create 페이지 접속
+2. 이미지 파일 선택 (JPG, PNG, GIF, 최대 5MB)
+3. 업로드 시도
+4. 브라우저 콘솔에서 에러 확인
+
+============================================================================
+3. 대안: 이미지 생성 API 사용 (AI 동화 만들기)
+============================================================================
+
+Cloudinary 없이도 이미지 생성 가능:
+- app/api/generate-image/route.ts 사용
+- pollinations.ai API로 이미지 자동 생성
+- 환경변수 불필요
+
+현재 동작:
+- /generate 페이지에서 이미지 자동 생성
+- 테마와 아이 이름을 기반으로 이미지 생성
+- Cloudinary 계정 없어도 작동
+
+============================================================================
+4. 임시 해결책: Cloudinary 없이 이미지 URL 사용
+============================================================================
+
+Cloudinary 설정 전까지 임시로 다른 이미지 서비스 사용:
+
+방법 A: placeholder 이미지 사용
+---------------------------------
+app/create/page.tsx에서 이미지 업로드 부분 수정:
+
+  if (imageFile) {
+    setIsUploading(true);
+    // 임시: Cloudinary 대신 placeholder 사용
+    const imageUrl = `https://via.placeholder.com/512?text=${encodeURIComponent(title)}`;
+    setIsUploading(false);
+  }
+
+방법 B: 이미지 업로드 건너뛰기
+-----------------------------
+이미지 없이 텍스트만 저장:
+
+  let imageUrl = '';
+  // 이미지 업로드 건너뛰기
+  // if (imageFile) { ... }
+
+============================================================================
+5. 디버깅 방법
+============================================================================
+
+5.1 브라우저 콘솔 확인
+-----------------------
+1. F12 개발자 도구 열기
+2. Console 탭에서 에러 메시지 확인
+3. Network 탭에서 upload-image API 요청 확인
+
+5.2 서버 로그 확인
+------------------
+터미널에서 다음 로그 확인:
+- Cloudinary env missing: ... (환경변수 미설정)
+- 이미지 업로드 오류: ... (업로드 실패)
+
+5.3 환경변수 확인 (개발용)
+---------------------------
+임시로 환경변수 확인을 위해 코드 추가:
+
+app/api/upload-image/route.ts 상단에 추가:
+console.log('Cloudinary config:', {
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+  has_key: !!process.env.CLOUDINARY_API_KEY,
+  has_secret: !!process.env.CLOUDINARY_API_SECRET,
+});
+
+============================================================================
+6. 권장 해결 순서
+============================================================================
+
+즉시 (Cloudinary 계정 있는 경우):
+1. .env.local에 Cloudinary 환경변수 추가
+2. 개발 서버 재시작
+3. 이미지 업로드 테스트
+
+단기 (Cloudinary 계정 없는 경우):
+1. Cloudinary 무료 계정 생성
+2. API 키 확인
+3. .env.local에 환경변수 추가
+4. 개발 서버 재시작
+5. 테스트
+
+임시 (즉시 필요한 경우):
+1. 이미지 업로드 기능 일시 비활성화
+2. 텍스트만 저장하도록 수정
+3. 추후 Cloudinary 설정 후 다시 활성화
+
+============================================================================
+7. .env.local 파일 예시
+============================================================================
+
+# Firebase
+NEXT_PUBLIC_FIREBASE_API_KEY=your_firebase_api_key
+NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN=your_project.firebaseapp.com
+NEXT_PUBLIC_FIREBASE_PROJECT_ID=your_project_id
+NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET=your_project.appspot.com
+NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID=your_sender_id
+NEXT_PUBLIC_FIREBASE_APP_ID=your_app_id
+
+# Cloudinary (이미지 업로드용)
+CLOUDINARY_CLOUD_NAME=your_cloud_name
+CLOUDINARY_API_KEY=your_api_key
+CLOUDINARY_API_SECRET=your_api_secret
+
+==========================================================================
+요약
+==========================================================================
+
+핵심 문제: Cloudinary 환경변수 미설정으로 이미지 업로드 실패
+
+즉시 해결: Cloudinary 계정 생성 후 .env.local에 환경변수 추가
+
+임시 해결: 이미지 업로드 기능 비활성화 또는 placeholder 이미지 사용

@@ -2,11 +2,14 @@
 // 직접 만들기 페이지 — 텍스트 직접 입력 + Cloudinary 이미지 업로드
 import { useState, useRef } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
+import { useAuth } from '../../components/AuthContext';
 import { saveStory } from '../../lib/storyService';
-import { ensureAuth } from '../../lib/authService';
 import TTSPlayer from '../../components/TTSPlayer';
 
 export default function CreatePage() {
+  const { currentUser } = useAuth();
+  const router = useRouter();
   const [title, setTitle] = useState('');
   const [storyText, setStoryText] = useState('');
   const [imageFile, setImageFile] = useState<File | null>(null);
@@ -22,16 +25,12 @@ export default function CreatePage() {
   function handleImageChange(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
     if (!file) return;
-
     if (file.size > 5 * 1024 * 1024) {
       setErrorMessage('이미지 파일은 5MB 이하만 업로드 가능합니다');
       return;
     }
-
     setImageFile(file);
     setErrorMessage('');
-
-    // 로컬 미리보기 생성
     const reader = new FileReader();
     reader.onloadend = () => {
       setImagePreview(reader.result as string);
@@ -48,6 +47,10 @@ export default function CreatePage() {
 
   // 동화 저장
   async function handleSave() {
+    if (!currentUser) {
+      router.push('/login');
+      return;
+    }
     if (!title.trim()) {
       setErrorMessage('동화 제목을 입력해주세요');
       return;
@@ -61,7 +64,6 @@ export default function CreatePage() {
     setErrorMessage('');
 
     try {
-      await ensureAuth();
       let imageUrl = '';
 
       // 이미지가 있으면 Cloudinary에 업로드
@@ -86,6 +88,7 @@ export default function CreatePage() {
 
       // Firestore에 저장
       await saveStory({
+        userId: currentUser.uid,
         childName: title,
         theme: '직접 작성',
         ageGroup: '전체',
@@ -114,7 +117,7 @@ export default function CreatePage() {
   }
 
   return (
-    <main className="min-h-screen bg-linear-to-b from-purple-50 to-white">
+    <main className="min-h-screen bg-gradient-to-b from-purple-50 to-white">
 
       {/* 네비게이션 */}
       <nav className="flex justify-between items-center px-8 py-4 bg-white shadow-sm">

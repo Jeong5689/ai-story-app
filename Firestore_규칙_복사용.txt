@@ -1,3 +1,8 @@
+Firestore 규칙 복사용 (Firebase Console에 붙여넣으세요)
+==========================================================
+
+아래 내용을 전체 복사해서 Firebase Console의 Firestore 규칙에 붙여넣으세요:
+
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
@@ -36,3 +41,15 @@ service cloud.firestore {
     }
   }
 }
+
+==========================================================================
+수정 방법
+==========================================================================
+
+1. https://console.firebase.google.com/ 접속
+2. 프로젝트: ai-story-app-199ff 선택
+3. Firestore Database → 규칙(Rules) 탭 클릭
+4. 기존 내용 전체 삭제
+5. 위 내용 붙여넣기
+6. 우측 상단 "게시(Publish)" 버튼 클릭
+7. 브라우저 새로고침 후 로그인 재시도
