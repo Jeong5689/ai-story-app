@@ -1,12 +1,13 @@
-'use client';
-import { useState } from 'react';
-import Link from 'next/link';
-import { useRouter } from 'next/navigation';
-import { useAuth } from '../../components/AuthContext';
-import { saveStory } from '../../lib/storyService';
-import { forceRefreshAuth } from '../../lib/authService';
-import TTSPlayer from '../../components/TTSPlayer';
-import ParagraphWithImage from '../../components/ParagraphWithImage';
+"use client";
+import Image from 'next/image'
+import { useState } from "react";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useAuth } from "../../components/AuthContext";
+import { saveStory } from "../../lib/storyService";
+import { forceRefreshAuth } from "../../lib/authService";
+import TTSPlayer from "../../components/TTSPlayer";
+import ParagraphWithImage from "../../components/ParagraphWithImage";
 
 interface StoryResult {
   storyText: string;
@@ -16,24 +17,24 @@ interface StoryResult {
 export default function GeneratePage() {
   const { currentUser } = useAuth();
   const router = useRouter();
-  const [childName, setChildName] = useState('');
-  const [theme, setTheme] = useState('');
-  const [ageGroup, setAgeGroup] = useState('5');
-  const [moral, setMoral] = useState('');
+  const [childName, setChildName] = useState("");
+  const [theme, setTheme] = useState("");
+  const [ageGroup, setAgeGroup] = useState("5");
+  const [moral, setMoral] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const [loadingStep, setLoadingStep] = useState('');
+  const [loadingStep, setLoadingStep] = useState("");
   const [result, setResult] = useState<StoryResult | null>(null);
-  const [errorMessage, setErrorMessage] = useState('');
-  const [saveWarning, setSaveWarning] = useState('');
+  const [errorMessage, setErrorMessage] = useState("");
+  const [saveWarning, setSaveWarning] = useState("");
 
   // PDF 다운로드 함수
   async function handleDownloadPDF() {
     if (!result) return;
     try {
-      const { default: html2canvas } = await import('html2canvas');
-      const { default: jsPDF } = await import('jspdf');
+      const { default: html2canvas } = await import("html2canvas");
+      const { default: jsPDF } = await import("jspdf");
 
-      const element = document.createElement('div');
+      const element = document.createElement("div");
       element.style.cssText = `
         width: 800px;
         padding: 60px;
@@ -49,22 +50,24 @@ export default function GeneratePage() {
           <div style="color:white;font-size:22px;font-weight:bold;margin-bottom:6px;">🌟 동화나라</div>
           <div style="color:#E9D5FF;font-size:14px;">AI로 만드는 우리 아이만의 동화</div>
         </div>
-        ${result.imageUrl
-          ? `<img src="${result.imageUrl}" style="width:100%;border-radius:12px;margin-bottom:32px;" crossorigin="anonymous" />`
-          : ''}
+        ${
+          result.imageUrl
+            ? `<img src="${result.imageUrl}" style="width:100%;border-radius:12px;margin-bottom:32px;" crossorigin="anonymous" />`
+            : ""
+        }
         <div style="font-size:16px;line-height:2;color:#374151;">
           ${result.storyText
-            .split('\n')
-            .filter(line => line.trim())
-            .map(line =>
-              line.startsWith('##')
-                ? `<h2 style="color:#7C3AED;font-size:26px;font-weight:bold;text-align:center;margin:24px 0 16px;">${line.replace('## ', '')}</h2>`
-                : `<p style="margin-bottom:14px;">${line}</p>`
+            .split("\n")
+            .filter((line) => line.trim())
+            .map((line) =>
+              line.startsWith("##")
+                ? `<h2 style="color:#7C3AED;font-size:26px;font-weight:bold;text-align:center;margin:24px 0 16px;">${line.replace("## ", "")}</h2>`
+                : `<p style="margin-bottom:14px;">${line}</p>`,
             )
-            .join('')}
+            .join("")}
         </div>
         <div style="text-align:center;color:#9CA3AF;font-size:13px;margin-top:40px;border-top:1px solid #E5E7EB;padding-top:20px;">
-          만든 날: ${new Date().toLocaleDateString('ko-KR')} | 동화나라
+          만든 날: ${new Date().toLocaleDateString("ko-KR")} | 동화나라
         </div>
       `;
 
@@ -73,38 +76,37 @@ export default function GeneratePage() {
         scale: 2,
         useCORS: true,
         allowTaint: true,
-        backgroundColor: '#ffffff',
+        backgroundColor: "#ffffff",
       });
       document.body.removeChild(element);
 
       const pdf = new jsPDF({
-        orientation: 'portrait',
-        unit: 'mm',
-        format: 'a4',
+        orientation: "portrait",
+        unit: "mm",
+        format: "a4",
       });
 
-      const imgData = canvas.toDataURL('image/png');
+      const imgData = canvas.toDataURL("image/png");
       const pdfWidth = pdf.internal.pageSize.getWidth();
       const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
       const pageHeight = pdf.internal.pageSize.getHeight();
       let heightLeft = pdfHeight;
       let position = 0;
 
-      pdf.addImage(imgData, 'PNG', 0, position, pdfWidth, pdfHeight);
+      pdf.addImage(imgData, "PNG", 0, position, pdfWidth, pdfHeight);
       heightLeft -= pageHeight;
 
       while (heightLeft > 0) {
         position = heightLeft - pdfHeight;
         pdf.addPage();
-        pdf.addImage(imgData, 'PNG', 0, position, pdfWidth, pdfHeight);
+        pdf.addImage(imgData, "PNG", 0, position, pdfWidth, pdfHeight);
         heightLeft -= pageHeight;
       }
 
       pdf.save(`${childName}의_동화.pdf`);
-
     } catch (error) {
-      console.error('PDF 생성 오류:', error);
-      alert('PDF 생성 중 오류가 발생했습니다.');
+      console.error("PDF 생성 오류:", error);
+      alert("PDF 생성 중 오류가 발생했습니다.");
     }
   }
 
@@ -112,43 +114,43 @@ export default function GeneratePage() {
   async function handleGenerate() {
     // 로그인 확인
     if (!currentUser) {
-      router.push('/login');
+      router.push("/login");
       return;
     }
     if (!childName.trim() || !theme.trim()) {
-      setErrorMessage('이름과 테마를 모두 입력해주세요');
+      setErrorMessage("이름과 테마를 모두 입력해주세요");
       return;
     }
     setIsLoading(true);
-    setErrorMessage('');
-    setSaveWarning('');
+    setErrorMessage("");
+    setSaveWarning("");
     setResult(null);
 
     try {
       // 1단계: 동화 텍스트 생성
-      setLoadingStep('✍️ 동화를 쓰고 있어요...');
-      const storyResponse = await fetch('/api/generate-story', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+      setLoadingStep("✍️ 동화를 쓰고 있어요...");
+      const storyResponse = await fetch("/api/generate-story", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ childName, theme, ageGroup, moral }),
       });
       const storyData = await storyResponse.json();
 
       if (!storyResponse.ok) {
-        throw new Error(storyData.error || '동화 생성 실패');
+        throw new Error(storyData.error || "동화 생성 실패");
       }
 
       // 2단계: 이미지 생성
-      setLoadingStep('🎨 삽화를 그리고 있어요...');
-      const imageResponse = await fetch('/api/generate-image', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+      setLoadingStep("🎨 삽화를 그리고 있어요...");
+      const imageResponse = await fetch("/api/generate-image", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ childName, theme }),
       });
       const imageData = await imageResponse.json();
 
       if (!imageResponse.ok) {
-        throw new Error(imageData.error || '이미지 생성 실패');
+        throw new Error(imageData.error || "이미지 생성 실패");
       }
 
       const storyResult = {
@@ -162,11 +164,11 @@ export default function GeneratePage() {
       // Firestore 저장 시도 (실패해도 결과는 표시)
       try {
         if (!currentUser) {
-          throw new Error('로그인이 필요합니다.');
+          throw new Error("로그인이 필요합니다.");
         }
         // 인증 토큰 강제 갱신
         await forceRefreshAuth();
-        
+
         await saveStory({
           userId: currentUser.uid,
           childName,
@@ -176,24 +178,26 @@ export default function GeneratePage() {
           storyText: storyData.story,
           imageUrl: imageData.imageUrl,
         });
-          } catch (saveError: unknown) {
-        const errMsg = saveError instanceof Error ? saveError.message : '알 수 없는 오류';
-        console.error('저장 실패:', saveError);
+      } catch (saveError: unknown) {
+        const errMsg =
+          saveError instanceof Error ? saveError.message : "알 수 없는 오류";
+        console.error("저장 실패:", saveError);
         setSaveWarning(`동화는 생성됐지만 저장에 실패했습니다: ${errMsg}`);
-      }  
-
+      }
     } catch (error: unknown) {
-      console.error('생성 오류:', error);
-      setErrorMessage((error as Error)?.message || '동화 생성 중 오류가 발생했습니다. 다시 시도해주세요.');
+      console.error("생성 오류:", error);
+      setErrorMessage(
+        (error as Error)?.message ||
+          "동화 생성 중 오류가 발생했습니다. 다시 시도해주세요.",
+      );
     } finally {
       setIsLoading(false);
-      setLoadingStep('');
+      setLoadingStep("");
     }
   }
 
   return (
     <main className="min-h-screen bg-linear-to-b from-purple-50 to-white">
-
       <nav className="flex justify-between items-center px-8 py-4 bg-white shadow-sm">
         <Link href="/">
           <div className="text-2xl font-bold text-purple-600 cursor-pointer">
@@ -214,7 +218,6 @@ export default function GeneratePage() {
 
         {!result && !isLoading && (
           <div className="bg-white rounded-2xl shadow-sm p-8 mb-6">
-
             <div className="mb-6">
               <label className="block text-gray-700 font-bold mb-2">
                 주인공 이름 *
@@ -233,14 +236,21 @@ export default function GeneratePage() {
                 동화 테마 *
               </label>
               <div className="grid grid-cols-3 gap-3 mb-3">
-                {['우주 탐험', '마법 숲', '바닷속 모험', '공룡 친구', '동물 왕국', '직접 입력'].map((t) => (
+                {[
+                  "우주 탐험",
+                  "마법 숲",
+                  "바닷속 모험",
+                  "공룡 친구",
+                  "동물 왕국",
+                  "직접 입력",
+                ].map((t) => (
                   <button
                     key={t}
-                    onClick={() => t !== '직접 입력' && setTheme(t)}
+                    onClick={() => t !== "직접 입력" && setTheme(t)}
                     className={`py-2 px-3 rounded-xl border text-sm transition ${
                       theme === t
-                        ? 'bg-purple-600 text-white border-purple-600'
-                        : 'border-gray-200 text-gray-600 hover:border-purple-400'
+                        ? "bg-purple-600 text-white border-purple-600"
+                        : "border-gray-200 text-gray-600 hover:border-purple-400"
                     }`}
                   >
                     {t}
@@ -276,7 +286,8 @@ export default function GeneratePage() {
 
             <div className="mb-8">
               <label className="block text-gray-700 font-bold mb-2">
-                담고 싶은 교훈 <span className="text-gray-400 font-normal">(선택)</span>
+                담고 싶은 교훈{" "}
+                <span className="text-gray-400 font-normal">(선택)</span>
               </label>
               <input
                 type="text"
@@ -307,7 +318,9 @@ export default function GeneratePage() {
           <div className="text-center py-20">
             <div className="text-6xl mb-6 animate-bounce">📖</div>
             <p className="text-xl text-purple-600 font-bold">{loadingStep}</p>
-            <p className="text-gray-400 mt-2">약 30초 정도 걸려요. 잠시만 기다려주세요!</p>
+            <p className="text-gray-400 mt-2">
+              약 30초 정도 걸려요. 잠시만 기다려주세요!
+            </p>
           </div>
         )}
 
@@ -319,16 +332,19 @@ export default function GeneratePage() {
               </div>
             )}
             {result.imageUrl && (
-              <img
+              <Image
                 src={result.imageUrl}
                 alt="동화 삽화"
-                className="w-full rounded-2xl mb-8 shadow-sm"
+                width={800} // 최적화를 위한 기본 가로 크기 가이드 (비율 유지용)
+                height={600} // 최적화를 위한 기본 세로 크기 가이드 (비율 유지용)
+                className="w-full h-auto rounded-2xl mb-8 shadow-sm"
+                unoptimized // 원격 서버(S3, OpenAI 등)에서 받아오는 AI 이미지이므로 필수 추가
               />
             )}
-                        <div className="prose max-w-none">
+            <div className="prose max-w-none">
               {result.storyText
-                .split('\n')
-                .filter(line => line.trim())
+                .split("\n")
+                .filter((line) => line.trim())
                 .map((line, index) => (
                   <ParagraphWithImage
                     key={index}
@@ -363,7 +379,6 @@ export default function GeneratePage() {
             </div>
           </div>
         )}
-
       </div>
     </main>
   );
