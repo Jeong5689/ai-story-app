@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation';
 import { useAuth } from '../../components/AuthContext';
 import { saveStory } from '../../lib/storyService';
 import TTSPlayer from '../../components/TTSPlayer';
+import ParagraphWithImage from '../../components/ParagraphWithImage';
 
 export default function CreatePage() {
   const { currentUser } = useAuth();
@@ -164,12 +165,19 @@ export default function CreatePage() {
             <h2 className="text-2xl font-bold text-purple-700 text-center mb-6">
               {title}
             </h2>
-            <div className="prose max-w-none">
-              {storyText.split('\n').map((line, index) => (
-                <p key={index} className="mb-3 text-gray-700 leading-relaxed text-lg">
-                  {line}
-                </p>
-              ))}
+                        <div className="prose max-w-none">
+              {storyText
+                .split('\n')
+                .filter(line => line.trim())
+                .map((line, index) => (
+                  <ParagraphWithImage
+                    key={index}
+                    text={line}
+                    index={index}
+                    childName={title}
+                    theme="직접 작성"
+                  />
+                ))}
             </div>
             <TTSPlayer text={`${title}. ${storyText}`} />
             <div className="flex gap-4 mt-6">
