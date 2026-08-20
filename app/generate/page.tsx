@@ -6,6 +6,7 @@ import { useAuth } from '../../components/AuthContext';
 import { saveStory } from '../../lib/storyService';
 import { forceRefreshAuth } from '../../lib/authService';
 import TTSPlayer from '../../components/TTSPlayer';
+import ParagraphWithImage from '../../components/ParagraphWithImage';
 
 interface StoryResult {
   storyText: string;
@@ -175,11 +176,11 @@ export default function GeneratePage() {
           storyText: storyData.story,
           imageUrl: imageData.imageUrl,
         });
-      } catch (saveError: unknown) {
+          } catch (saveError: unknown) {
+        const errMsg = saveError instanceof Error ? saveError.message : '알 수 없는 오류';
         console.error('저장 실패:', saveError);
-        const errorMessage = saveError instanceof Error ? saveError.message : '저장에 실패했습니다.';
-        setSaveWarning(`동화는 생성됐지만 저장에 실패했습니다: ${errorMessage} 로그인 상태를 확인해주세요.`);
-      }
+        setSaveWarning(`동화는 생성됐지만 저장에 실패했습니다: ${errMsg}`);
+      }  
 
     } catch (error: unknown) {
       console.error('생성 오류:', error);
@@ -324,19 +325,19 @@ export default function GeneratePage() {
                 className="w-full rounded-2xl mb-8 shadow-sm"
               />
             )}
-            <div className="prose max-w-none">
-              {result.storyText.split('\n').map((line, index) => (
-                <p
-                  key={index}
-                  className={`mb-3 ${
-                    line.startsWith('##')
-                      ? 'text-2xl font-bold text-purple-700'
-                      : 'text-gray-700 leading-relaxed text-lg'
-                  }`}
-                >
-                  {line.replace('## ', '')}
-                </p>
-              ))}
+                        <div className="prose max-w-none">
+              {result.storyText
+                .split('\n')
+                .filter(line => line.trim())
+                .map((line, index) => (
+                  <ParagraphWithImage
+                    key={index}
+                    text={line}
+                    index={index}
+                    childName={childName}
+                    theme={theme}
+                  />
+                ))}
             </div>
             <TTSPlayer text={result.storyText} />
             <div className="flex flex-col gap-3 mt-8">

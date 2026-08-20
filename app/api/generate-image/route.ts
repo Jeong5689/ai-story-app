@@ -2,20 +2,21 @@ import { NextRequest, NextResponse } from 'next/server';
 
 export async function POST(request: NextRequest) {
   try {
-    const { theme, childName } = await request.json();
+    const { theme, childName, paragraph } = await request.json();
 
-    if (!theme || !childName) {
+    if (!theme && !paragraph) {
       return NextResponse.json(
-        { error: '테마와 이름을 입력해주세요' },
+        { error: '테마 또는 단락 내용을 입력해주세요' },
         { status: 400 }
       );
     }
 
-    // 영문으로만 프롬프트 구성 (한글 인코딩 문제 방지)
-    const imagePrompt = encodeURIComponent(
-      `children book illustration, soft watercolor, pastel colors, cute character, magical forest, no text, child friendly`
-    );
+    // 단락 내용이 있으면 단락 기반, 없으면 테마 기반
+    const promptText = paragraph
+      ? `children book illustration, ${paragraph.slice(0, 100)}, soft watercolor, pastel colors, cute, magical, no text, child friendly`
+      : `children book illustration, ${childName || ''}, ${theme || ''}, soft watercolor, pastel colors, cute, magical, no text, child friendly`;
 
+    const imagePrompt = encodeURIComponent(promptText);
     const imageUrl = `https://image.pollinations.ai/prompt/${imagePrompt}?width=512&height=512&nologo=true&seed=${Date.now()}`;
 
     return NextResponse.json({ imageUrl });
