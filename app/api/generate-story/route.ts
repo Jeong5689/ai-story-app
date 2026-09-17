@@ -6,6 +6,14 @@ const groqClient = new Groq({
   apiKey: process.env.GROQ_API_KEY || '',
 });
 
+// catch문 외부 또는 상단에 정의하여 전역에서 참조 가능하도록 배치
+interface ApiError {
+  message?: string;
+  status?: number;
+  code?: string;
+  stack?: string;
+}
+
 export async function POST(request: NextRequest) {
   try {
     const { childName, theme, ageGroup, moral } = await request.json();
@@ -36,23 +44,26 @@ export async function POST(request: NextRequest) {
     `;
 
     const completion = await groqClient.chat.completions.create({
-      model: 'llama-3.3-70b-versatile',
-      messages: [{ role: 'user', content: prompt }],
-      max_tokens: 1500,
+      model: "qwen/qwen3.6-27b", // 혹은 "openai/gpt-oss-120b"
+      messages: [ { role: 'user', content: prompt } ]
     });
 
     const storyText = completion.choices[0].message.content || '';
     return NextResponse.json({ story: storyText });
 
-  } catch (error: any) {
+  } catch (error: unknown) {
+    // 💡 핵심 해결책: unknown 타입의 error를 미리 정의해둔 ApiError 타입으로 단언(as)합니다.
+    const err = error as ApiError;
+
     console.error('동화 생성 오류 상세:', {
-      message: error?.message,
-      status: error?.status,
-      code: error?.code,
-      stack: error?.stack,
+      message: err.message,
+      status: err.status,
+      code: err.code,
+      stack: err.stack,
     });
+
     return NextResponse.json(
-      { error: error?.message || '동화 생성에 실패했습니다' },
+      { error: err.message || '동화 생성에 실패했습니다' },
       { status: 500 }
     );
   }
