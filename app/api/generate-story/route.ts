@@ -44,7 +44,7 @@ export async function POST(request: NextRequest) {
     `;
 
     const completion = await groqClient.chat.completions.create({
-      model: "qwen/qwen3.6-27b", // 혹은 "openai/gpt-oss-120b"
+      model: "llama3-70b-8192", // 혹은 "openai/gpt-oss-120b"
       messages: [ { role: 'user', content: prompt } ]
     });
 
